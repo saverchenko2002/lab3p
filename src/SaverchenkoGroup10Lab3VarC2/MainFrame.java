@@ -11,6 +11,10 @@ public class MainFrame extends JFrame {
     private static final int HEIGHT = 500;
     private static final int WIDTH = 700;
 
+    private JTextField textFieldFrom;
+    private JTextField textFieldTo;
+    private JTextField textFieldStep;
+
     private Icon imgAuthor;
 
     private Double[] coefficients;
@@ -35,6 +39,7 @@ public class MainFrame extends JFrame {
         file.add(save);
 
         JMenuItem saveTxt = save.add(new JMenuItem("текстовый файл"));
+        saveTxt.setEnabled(false);
         saveTxt.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (fileChooser==null){
@@ -45,6 +50,7 @@ public class MainFrame extends JFrame {
         });
 
         JMenuItem saveToGraphic = save.add(new JMenuItem("данные для построения графика"));
+        saveToGraphic.setEnabled(false);
         saveToGraphic.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (fileChooser==null){
@@ -55,6 +61,7 @@ public class MainFrame extends JFrame {
         });
 
         JMenuItem saveToSvc = save.add(new JMenuItem("CSV-файл"));
+        saveToSvc.setEnabled(false);
         saveToSvc.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (fileChooser==null){
@@ -98,7 +105,33 @@ public class MainFrame extends JFrame {
         });
         about.setAccelerator(KeyStroke.getKeyStroke("ctrl I"));
 
+        JLabel labelForFrom = new JLabel("X изменяется на интервале от:");
+        textFieldFrom = new JTextField("0.0",10);
+        textFieldFrom.setMaximumSize(textFieldFrom.getPreferredSize());
+        JLabel labelForTo = new JLabel("до:");
+        textFieldTo = new JTextField("1.0",10);
+        textFieldTo.setMaximumSize(textFieldTo.getPreferredSize());
+        JLabel labelForStep = new JLabel("с шагом:");
+        textFieldStep = new JTextField("0.1",10);
+        textFieldStep.setMaximumSize(textFieldStep.getPreferredSize());
+
+        Box hboxRange = Box.createHorizontalBox();
+        hboxRange.setBorder(BorderFactory.createBevelBorder(1));
+        hboxRange.add(Box.createHorizontalGlue());
+        hboxRange.add(labelForFrom);
+        hboxRange.add(Box.createHorizontalStrut(10));
+        hboxRange.add(textFieldFrom);
+        hboxRange.add(Box.createHorizontalStrut(20));
+        hboxRange.add(labelForTo);
+        hboxRange.add(Box.createHorizontalStrut(10));
+        hboxRange.add(textFieldTo);
+        hboxRange.add(Box.createHorizontalStrut(20));
+        hboxRange.add(labelForStep);
+        hboxRange.add(Box.createHorizontalStrut(10));
+        hboxRange.add(textFieldStep);
+        hboxRange.add(Box.createHorizontalGlue());
+
         setJMenuBar(menuBar);
-        //revalidate();
+        getContentPane().add(hboxRange, BorderLayout.NORTH);
     }
 }
