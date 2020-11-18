@@ -131,7 +131,51 @@ public class MainFrame extends JFrame {
         hboxRange.add(textFieldStep);
         hboxRange.add(Box.createHorizontalGlue());
 
+        JButton buttonCalc = new JButton("Вычислить");
+        buttonCalc.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    Double from = Double.parseDouble(textFieldFrom.getText());
+                    Double to = Double.parseDouble(textFieldTo.getText());
+                    Double step = Double.parseDouble(textFieldStep.getText());
+                    saveTxt.setEnabled(true);
+                    saveToGraphic.setEnabled(true);
+                    saveToSvc.setEnabled(true);
+                    solve.setEnabled(true);
+                    find.setEnabled(true);
+                }
+                catch (NumberFormatException ex)
+                {
+                    JOptionPane.showMessageDialog(MainFrame.this,
+                            "Ошибка в формате записи числа с плавающей точкой", "Ошибочный формат числа", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        JButton buttonReset = new JButton("Очистить поля");
+        buttonReset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textFieldFrom.setText("0.0");
+                textFieldTo.setText("1.0");
+                textFieldStep.setText("0.1");
+                saveTxt.setEnabled(false);
+                saveToGraphic.setEnabled(false);
+                saveToSvc.setEnabled(false);
+                solve.setEnabled(false);
+                find.setEnabled(false);
+            }
+        });
+
+        Box hboxButtons = Box.createHorizontalBox();
+        hboxButtons.setBorder(BorderFactory.createBevelBorder(1));
+        hboxButtons.add(Box.createHorizontalGlue());
+        hboxButtons.add(buttonCalc);
+        hboxButtons.add(Box.createHorizontalStrut(30));
+        hboxButtons.add(buttonReset);
+        hboxButtons.add(Box.createHorizontalGlue());
+
         setJMenuBar(menuBar);
         getContentPane().add(hboxRange, BorderLayout.NORTH);
+        getContentPane().add(hboxButtons,BorderLayout.SOUTH);
     }
 }
