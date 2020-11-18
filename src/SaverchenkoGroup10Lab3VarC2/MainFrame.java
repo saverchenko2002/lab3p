@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.*;
 
 public class MainFrame extends JFrame {
 
@@ -20,6 +20,7 @@ public class MainFrame extends JFrame {
     private Double[] coefficients;
 
     private JFileChooser fileChooser = null;
+    private GornerTableModel data;
     private Box hboxResult;
 
     public MainFrame(Double[] coefficients)
@@ -46,6 +47,8 @@ public class MainFrame extends JFrame {
                     fileChooser=new JFileChooser();
                     fileChooser.setCurrentDirectory(new File("."));
                 }
+                if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION)
+                    saveToTextFile(fileChooser.getSelectedFile());
             }
         });
 
@@ -57,6 +60,8 @@ public class MainFrame extends JFrame {
                     fileChooser=new JFileChooser();
                     fileChooser.setCurrentDirectory(new File("."));
                 }
+                if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION)
+                    saveToGraphFile(fileChooser.getSelectedFile());
             }
         });
 
@@ -68,6 +73,8 @@ public class MainFrame extends JFrame {
                     fileChooser=new JFileChooser();
                     fileChooser.setCurrentDirectory(new File("."));
                 }
+                if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION)
+                    saveToCsvFile(fileChooser.getSelectedFile());
             }
         });
 
@@ -81,12 +88,14 @@ public class MainFrame extends JFrame {
 
         JMenu table = new JMenu("Таблица");
         JMenuItem solve = table.add(new JMenuItem("Найти значение многочлена"));
+        solve.setEnabled(false);
         solve.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
             }
         });
         JMenuItem find = table.add(new JMenuItem("Найти близкие к простым"));
+        find.setEnabled(false);
         find.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
@@ -138,11 +147,24 @@ public class MainFrame extends JFrame {
                     Double from = Double.parseDouble(textFieldFrom.getText());
                     Double to = Double.parseDouble(textFieldTo.getText());
                     Double step = Double.parseDouble(textFieldStep.getText());
-                    saveTxt.setEnabled(true);
-                    saveToGraphic.setEnabled(true);
-                    saveToSvc.setEnabled(true);
-                    solve.setEnabled(true);
-                    find.setEnabled(true);
+                    if (step>to-from) {
+                        JOptionPane.showMessageDialog(MainFrame.this,
+                                "Шаг больше промежутка", "Ошибочный ввод данных", JOptionPane.WARNING_MESSAGE);
+                    }
+                    else {
+                        data = new GornerTableModel(from, to, step, coefficients);
+                        JTable workTable = new JTable(data);
+                        workTable.setRowHeight(30);
+                        JScrollPane workTableScrollPane = new JScrollPane(workTable);
+                        hboxResult.removeAll();
+                        hboxResult.add(workTableScrollPane);
+                        getContentPane().validate();
+                        saveTxt.setEnabled(true);
+                        saveToGraphic.setEnabled(true);
+                        saveToSvc.setEnabled(true);
+                        solve.setEnabled(true);
+                        find.setEnabled(true);
+                    }
                 }
                 catch (NumberFormatException ex)
                 {
@@ -158,6 +180,9 @@ public class MainFrame extends JFrame {
                 textFieldFrom.setText("0.0");
                 textFieldTo.setText("1.0");
                 textFieldStep.setText("0.1");
+                hboxResult.removeAll();
+                hboxResult.add(new JPanel());
+                getContentPane().validate();
                 saveTxt.setEnabled(false);
                 saveToGraphic.setEnabled(false);
                 saveToSvc.setEnabled(false);
@@ -174,8 +199,82 @@ public class MainFrame extends JFrame {
         hboxButtons.add(buttonReset);
         hboxButtons.add(Box.createHorizontalGlue());
 
+        JTable workTable = new JTable();
+        JScrollPane workTableScrollPane = new JScrollPane(workTable);
+
+        hboxResult = Box.createHorizontalBox();
+        hboxResult.add(new JPanel());
+
         setJMenuBar(menuBar);
         getContentPane().add(hboxRange, BorderLayout.NORTH);
         getContentPane().add(hboxButtons,BorderLayout.SOUTH);
+        getContentPane().add(hboxResult,BorderLayout.CENTER);
+    }
+
+    protected void saveToTextFile(File selectedFile) {
+        try{
+            PrintStream out = new PrintStream(selectedFile);
+            out.println("Результаты табулирования многочлена по схеме Горнера");
+            out.print("Многочлен: ");
+            for (int i=0; i<coefficients.length; i++) {
+                out.print(coefficients[i] + "*X^" + (coefficients.length-i-1));
+                if (i!=coefficients.length-1)
+                    out.print(" + ");
+            }
+            out.println("");
+            out.println("Интервал от " + data.getFrom() + " до " +
+                    data.getTo() + " с шагом " + data.getStep());
+            out.println("====================================================");
+            for (int i = 0; i<data.getRowCount(); i++) {
+                out.println("Значение в точке " + data.getValueAt(i,0)
+                        + " по Горнеру равно " + data.getValueAt(i,1));
+            }
+            out.println("====================================================");
+            for (int i = 0; i<data.getRowCount(); i++) {
+                out.println("Значение в точке " + data.getValueAt(i,0)
+                        + " по методу Math.pow равно " + data.getValueAt(i,2));
+            }
+            out.println("====================================================");
+            for (int i = 0; i<data.getRowCount(); i++) {
+                out.println("Разница между м. Горнера и Math.pow в точке" + data.getValueAt(i,0)
+                        + " равна " + data.getValueAt(i,3));
+            }
+            out.close();
+        }
+        catch (FileNotFoundException e)
+        {
+
+        }
+    }
+
+    protected void saveToGraphFile(File selectedFile)
+    {
+        try {
+            DataOutputStream out = new DataOutputStream(new FileOutputStream(selectedFile));
+            for(int i =0;i<data.getRowCount();i++){
+                out.writeDouble((Double)data.getValueAt(i,0));
+                out.writeDouble((Double)data.getValueAt(i,1));
+                out.writeDouble((Double)data.getValueAt(i,2));
+                out.writeDouble((Double)data.getValueAt(i,3));
+            }
+            out.close();
+        }
+        catch (IOException e)
+        {
+
+        }
+    }
+
+    protected void saveToCsvFile(File selectedFile)
+    {
+        try(FileWriter writer = new FileWriter(selectedFile)){
+            for (int i = 0; i < data.getRowCount(); i++){
+                writer.append("" + data.getValueAt(i, 0) + ',' + data.getValueAt(i, 1) + ',' + data.getValueAt(i, 2) + ',' + data.getValueAt(i, 3));
+                writer.append(System.lineSeparator());
+            }
+            writer.close();
+        } catch (IOException e){
+
+        }
     }
 }
