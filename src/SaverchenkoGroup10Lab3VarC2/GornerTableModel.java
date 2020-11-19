@@ -27,15 +27,14 @@ public class GornerTableModel extends AbstractTableModel {
         if (col == 0)
             return x;
         else {
-            Double result=0.0;
+            double result=0.0;
             if (col == 1) {
-                result = coefficients[coefficients.length - 1];
-                for (int i = 1; i < coefficients.length; i++) {
-                    result *= x;
-                    result += coefficients[coefficients.length - i - 1];
+                for (int i = 0; i < coefficients.length; i++) {
+                    result = result * x + coefficients[i];
                 }
                 return result;
             }
+
             else if (col == 2) {
                 result = 0.0;
                 for (int i = 0; i < coefficients.length; i++)

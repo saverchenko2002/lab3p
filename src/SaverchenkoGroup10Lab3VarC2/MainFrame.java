@@ -20,6 +20,7 @@ public class MainFrame extends JFrame {
     private Double[] coefficients;
 
     private JFileChooser fileChooser = null;
+    private GornerTableCellRenderer renderer = new GornerTableCellRenderer();
     private GornerTableModel data;
     private Box hboxResult;
 
@@ -88,19 +89,26 @@ public class MainFrame extends JFrame {
 
         JMenu table = new JMenu("Таблица");
         JMenuItem solve = table.add(new JMenuItem("Найти значение многочлена"));
+        solve.setAccelerator(KeyStroke.getKeyStroke("ctrl F"));
         solve.setEnabled(false);
         solve.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                String value = JOptionPane.showInputDialog(MainFrame.this, "Введите значение для поиска", "Поиск значения", JOptionPane.QUESTION_MESSAGE);
+                renderer.simpleNum(false);
+                System.out.println(value);
+                renderer.setNeedle(value);
+                getContentPane().repaint();
             }
         });
         JMenuItem find = table.add(new JMenuItem("Найти близкие к простым"));
         find.setEnabled(false);
         find.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                renderer.simpleNum(true);
+                getContentPane().repaint();
             }
         });
+        find.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
         menuBar.add(table);
 
         JMenu help = new JMenu("Справка");
@@ -154,6 +162,7 @@ public class MainFrame extends JFrame {
                     else {
                         data = new GornerTableModel(from, to, step, coefficients);
                         JTable workTable = new JTable(data);
+                        workTable.setDefaultRenderer(Double.class,renderer);
                         workTable.setRowHeight(30);
                         JScrollPane workTableScrollPane = new JScrollPane(workTable);
                         hboxResult.removeAll();
@@ -182,6 +191,7 @@ public class MainFrame extends JFrame {
                 textFieldStep.setText("0.1");
                 hboxResult.removeAll();
                 hboxResult.add(new JPanel());
+                renderer.setNeedle(null);
                 getContentPane().validate();
                 saveTxt.setEnabled(false);
                 saveToGraphic.setEnabled(false);
