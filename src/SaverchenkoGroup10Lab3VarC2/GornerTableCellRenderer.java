@@ -58,20 +58,45 @@ public class GornerTableCellRenderer implements TableCellRenderer {
         } else {
             boolean simple = false;
             Double temp = Double.parseDouble(formattedDouble);
-            if ((temp + 0.1) >= (temp.intValue() + 1)) {
-                simple = true;
-                for (int i = 2; i < (temp.intValue() + 1); i++) {
-                    if ((temp.intValue() + 1) % i == 0) {
-                        simple = false;
-                        break;
+
+            if (temp.intValue() == 0 && temp<0.9)
+                for (int i = 0; i<2; i++);
+
+            else if  (temp > 0) {
+                if ((temp + 0.1) >= (temp.intValue() + 1)) {
+                    simple = true;
+                    for (int i = 2; i < (temp.intValue() + 1); i++) {
+                        if ((temp.intValue() + 1) % i == 0) {
+                            simple = false;
+                            break;
+                        }
+                    }
+                } else if (temp - 0.1 <= temp.intValue()) {
+                    simple = true;
+                    for (int i = 2; i < temp.intValue(); i++) {
+                        if (temp.intValue() % i == 0) {
+                            simple = false;
+                            break;
+                        }
                     }
                 }
-            } else if (temp - 0.1 <= temp.intValue()) {
-                simple = true;
-                for (int i = 2; i < temp.intValue(); i++) {
-                    if (temp.intValue() % i == 0) {
-                        simple = false;
-                        break;
+            }
+            else if (temp < 0) {
+                if ((-temp + 0.1) >= (-temp.intValue() + 1)) {
+                    simple = true;
+                    for (int i = 2; i < -temp.intValue() + 1; i++) {
+                        if ((-temp.intValue() + 1) % i == 0) {
+                            simple = false;
+                            break;
+                        }
+                    }
+                } else if (-temp - 0.1 <= -temp.intValue()) {
+                    simple = true;
+                    for (int i = 2; i < -temp.intValue(); i++) {
+                        if (-temp.intValue() % i == 0) {
+                            simple = false;
+                            break;
+                        }
                     }
                 }
             }
@@ -86,5 +111,4 @@ public class GornerTableCellRenderer implements TableCellRenderer {
     public void setNeedle(String needle) { this.needle=needle; }
 
     public void simpleNum(boolean confirm) { this.search = confirm; }
-
 }

@@ -95,7 +95,6 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String value = JOptionPane.showInputDialog(MainFrame.this, "Введите значение для поиска", "Поиск значения", JOptionPane.QUESTION_MESSAGE);
                 renderer.simpleNum(false);
-                System.out.println(value);
                 renderer.setNeedle(value);
                 getContentPane().repaint();
             }

@@ -15,7 +15,7 @@ public class Main {
         try {
             for (String arg: args) {
                 coefficients[i] = Double.parseDouble(arg);
-                System.out.println(coefficients[i++]);
+                i++;
             }
         }
         catch (NumberFormatException ex) {
