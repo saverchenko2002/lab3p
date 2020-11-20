@@ -47,7 +47,7 @@ public class GornerTableModel extends AbstractTableModel {
 
     public int getColumnCount() { return 4; }
 
-    public int getRowCount() { return new Double(Math.ceil((to-from)/step)).intValue()+1; }
+    public int getRowCount() { return Double.valueOf(((to-from)/step)).intValue()+1; }
 
     public Class<?> getColumnClass(int columnIndex) { return Double.class; }
 

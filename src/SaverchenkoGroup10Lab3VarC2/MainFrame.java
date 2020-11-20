@@ -100,6 +100,7 @@ public class MainFrame extends JFrame {
                 getContentPane().repaint();
             }
         });
+
         JMenuItem find = table.add(new JMenuItem("Найти близкие к простым"));
         find.setEnabled(false);
         find.addActionListener(new ActionListener() {
@@ -147,6 +148,8 @@ public class MainFrame extends JFrame {
         hboxRange.add(Box.createHorizontalStrut(10));
         hboxRange.add(textFieldStep);
         hboxRange.add(Box.createHorizontalGlue());
+        hboxRange.setPreferredSize(new Dimension(Double.valueOf(hboxRange.getMaximumSize().getWidth()).intValue(),
+                Double.valueOf(hboxRange.getMinimumSize().getHeight()).intValue()*2));
 
         JButton buttonCalc = new JButton("Вычислить");
         buttonCalc.addActionListener(new ActionListener() {
@@ -155,7 +158,7 @@ public class MainFrame extends JFrame {
                     Double from = Double.parseDouble(textFieldFrom.getText());
                     Double to = Double.parseDouble(textFieldTo.getText());
                     Double step = Double.parseDouble(textFieldStep.getText());
-                    if (step>to-from) {
+                    if (step>to-from ) {
                         JOptionPane.showMessageDialog(MainFrame.this,
                                 "Шаг больше промежутка", "Ошибочный ввод данных", JOptionPane.WARNING_MESSAGE);
                     }
@@ -167,6 +170,8 @@ public class MainFrame extends JFrame {
                         JScrollPane workTableScrollPane = new JScrollPane(workTable);
                         hboxResult.removeAll();
                         hboxResult.add(workTableScrollPane);
+                        renderer.simpleNum(false);
+                        renderer.setNeedle(null);
                         getContentPane().validate();
                         saveTxt.setEnabled(true);
                         saveToGraphic.setEnabled(true);
@@ -208,6 +213,8 @@ public class MainFrame extends JFrame {
         hboxButtons.add(Box.createHorizontalStrut(30));
         hboxButtons.add(buttonReset);
         hboxButtons.add(Box.createHorizontalGlue());
+        hboxButtons.setPreferredSize(new Dimension(Double.valueOf(hboxRange.getMaximumSize().getWidth()).intValue(),
+                Double.valueOf(hboxRange.getMinimumSize().getHeight()).intValue()*2));
 
         JTable workTable = new JTable();
         JScrollPane workTableScrollPane = new JScrollPane(workTable);

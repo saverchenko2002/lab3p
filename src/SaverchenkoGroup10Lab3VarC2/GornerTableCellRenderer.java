@@ -53,12 +53,32 @@ public class GornerTableCellRenderer implements TableCellRenderer {
         if (!search) {
             if ((column == 1 || column == 2) && needle != null && needle.equals(formattedDouble))
                 panel.setBackground(Color.MAGENTA);
-
             else
                 panel.setBackground(Color.WHITE);
-        }
-        else {
-            System.out.println("okay");
+        } else {
+            boolean simple = false;
+            Double temp = Double.parseDouble(formattedDouble);
+            if ((temp + 0.1) >= (temp.intValue() + 1)) {
+                simple = true;
+                for (int i = 2; i < (temp.intValue() + 1); i++) {
+                    if ((temp.intValue() + 1) % i == 0) {
+                        simple = false;
+                        break;
+                    }
+                }
+            } else if (temp - 0.1 <= temp.intValue()) {
+                simple = true;
+                for (int i = 2; i < temp.intValue(); i++) {
+                    if (temp.intValue() % i == 0) {
+                        simple = false;
+                        break;
+                    }
+                }
+            }
+            if ((column == 1 || column == 2) && simple)
+                panel.setBackground(Color.YELLOW);
+            else
+                panel.setBackground(Color.WHITE);
         }
         return panel;
     }
